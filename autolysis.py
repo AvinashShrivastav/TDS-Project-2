@@ -1,12 +1,13 @@
-# /// script 
-# requires-python = ">=3.11" 
-# dependencies = [ 
-# "requests", 
-# "pandas", 
-# "numpy",
-# "matplotlib",
-# ] 
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#   "requests",
+#   "pandas",
+#   "seaborn",
+#   "matplotlib",
+# ]
 # ///
+
 
 import requests
 import os
@@ -14,9 +15,12 @@ import pandas as pd
 import json  
 import traceback
 import sys
+import matplotlib.pyplot as plt
+import seaborn as sns
 
         
 file_name = sys.argv[1]
+
 
 AIPROXY_TOKEN = os.environ.get("AIPROXY_TOKEN")
 print(AIPROXY_TOKEN)
