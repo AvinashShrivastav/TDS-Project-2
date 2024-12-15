@@ -4,6 +4,7 @@
 # "requests", 
 # "pandas", 
 # "numpy",
+# "matplotlib",
 # ] 
 # ///
 
@@ -33,17 +34,18 @@ readme_data = {
 }
 
 instructions_to_make_charts = (
-    "You are the most intelligent and thoughtful person who create the most insightful charts."
-    "You would be given with the data and you need to generate python code to create the charts based on the data. "
-    "Do not make up the data. Use the data provided to you. it is stored in the dataframe named 'df'. which is already loaded for you. "
-    "Use appropriate chart type to represent the data. "
-    "Do not add comments to the chart code. "
-    "use seaborn to plot the chart  not matplotlib. "
-    "You are not allowed to use matplotlib. Use seaborn. "
-    "The charts should be created should be well labelled and should be easy to understand. "
-    "Export the chart as png." 
-    "Make sure the chart is exported as png"
+    "You are provided with a dataset loaded in a dataframe named `df`, along with its metadata. "
+    "Your task is to analyze the dataset and create a chart that answers the provided question or illustrates the relevant insight. "
+    "The dataset is huge the selection of chart type and axes must be considered accordingly . "
+    "Choose an appropriate chart type based on the data and the question. "
+    "Before plotting check if the size of datapoints that is to be plooted is not too large so as it fit in a canvas. If larger use other techniques"
+    "Consider the size of the dataset; if it's large, aggregate or filter the data before plotting. "
+    "Allowed to use matplotlib or seaborn libraries for plotting. But do not overlap"
+    "Ensure the chart is well-labeled, easy to interpret, and exported as a PNG file. (must export as png)"
+    "Preprocessing or transformation of the data may be required to generate the chart. "
+    "The code must not contain comments."
 )
+
 def correct_the_code(code, error, function_name="generate_chart"):
     code_with_error = code + "\n" + error + "\n" +str(metaData)
     json_data = {
@@ -95,8 +97,7 @@ def load_csv_with_fallback(file_name, encodings=['utf-8', 'ISO-8859-1', 'latin1'
             print(f"Failed to load with encoding: {encoding}, error: {e}")
     raise UnicodeDecodeError(f"All attempts to load the file {file_name} with the provided encodings failed.")
 
-# Usage
-file_name = 'media.csv'
+
 df = load_csv_with_fallback(file_name)
 
 with open(file=file_name, mode='r') as f:
@@ -202,10 +203,11 @@ functions = [
 content = (
     "The dataset has been already loaded in the environment as a pandas dataframe 'df'. "
     "The dataset may have missing values. Handle the missing values in the dataset. "
+    "The dataset is huge the selection of chart type and axes must be considered accordingly . "
     "You have to generate Python code to handle missing values in the dataset. The code should not contain any comments. "
     "The handling of missing values should consider the data type of the column as well as the context and semantics of the data. "
     "Your choice of handling missing values should be logical and based on the column's meaning and its relevance to the dataset's domain. "
-    "For example, replacing the 'Happiness Score' of a country like Afghanistan with the global mean would not be appropriate due to the specific context. "
+    "Think of it as what would a data scientist do in this situation. How does it impact the analysis and if its retention in data convey some meaning"
     "You can use the following libraries: pandas. "
     "The code should be generic, adaptable to any dataset, and should not rely on hardcoding column names. "
     "The column names and data types of the dataset are provided in the metadata. "
@@ -308,7 +310,8 @@ functions = [
 ]
 instructions_to_generate_questions = (
     "You are the most intelligent and thoughtful person who can analyze a dataset and identify the most impactful questions that can be asked from its columns."
-    "You may choose to use depending on the type of dataset and the domain of the dataset :"
+    "You may choose to use depending on the type of dataset and the domain of the dataset"
+    "Charts would be created to answer the questions so these questions should be relevant to be answered by charts"
     "You are highly practical and know which questions can provide the most value and insights when visualized using charts."
     "Your task is to identify three most important and insightful questions that can be asked and effectively visualized from the given dataset."
     "The questions should cover the purpose of the dataset comprehensively and utilize the columns in a way that provides a holistic understanding of the dataset as a whole."
@@ -380,21 +383,19 @@ for i in range(len(questions)):
 
         }
     ]
-    instructions = (
-        "You are provided with a dataset loaded in a dataframe named `df`. "
-        "The dataset's metadata is also provided for your reference."
-        "You need to analyze the dataset based on the type of analysis the question says to answer the question provided. "
-        "Generate python code to analyze the dataset and create a chart to answer the question. "
-        "Consider the size of the dataset before writing code. if the dataset is large for the chart, consider aggregating the data before creating the chart."
-        "use the seaborn library to plot the chart. Do not use matplotlib. "
-        "The chart should be well-labeled and easy to understand. "
-        "Export the chart as a PNG file."
-        "The code should not have any comments."
-        "The dataset may be preprocessed or transformed as needed to generate the chart."
-        "You are not allowed to use matplotlib. Use seaborn."
-        "The data set may have many rows columns so you may need to filter or aggregate the data as needed."
-        
+    instructions_to_make_charts = (
+    "You are provided with a dataset loaded in a dataframe named `df`, along with its metadata. "
+    "Your task is to analyze the dataset and create a chart that answers the provided question or illustrates the relevant insight. "
+    "Choose an appropriate chart type based on the data and the question. "
+    "The dataset is huge the selection of chart type and axes must be considered accordingly . "
+    "Consider the size of the dataset; if it's large, aggregate or filter the data before plotting. "
+    "Allowed to use matplotlib or seaborn libraries for plotting. But do not overlap"
+    "Ensure the chart is well-labeled, easy to interpret, and exported as a PNG file. (must export as png)"
+    "Preprocessing or transformation of the data may be required to generate the chart. "
+    "The code must not contain comments."
     )
+
+
     chart_dict = {}
     question = str(questions[i])
     question_str = json.dumps(question)
@@ -410,7 +411,7 @@ for i in range(len(questions)):
         "messages": [
             {
                 "role": "system",
-                "content": instructions
+                "content": instructions_to_make_charts
             },
             {
                 "role": "user",
@@ -428,7 +429,7 @@ for i in range(len(questions)):
     code = json.loads(response['choices'][0]['message']['function_call']['arguments'])['python_code']
     print(code)
     try:
-        execute_code(code, function_name= "generate_chart", limit = 3)
+        execute_code(code, function_name= "generate_chart", limit = 5)
     except Exception as e:
         print(e)
         print("Error in executing code")
@@ -533,7 +534,7 @@ print(readme_data)
 def generate_readme(data):
     readme_prompt = (
         "You are an expert in data analysis storytelling. Generate a detailed README.md file for the given project. "
-        "The README should include:\n\n"
+        "The README should include: You may reorganize the sections to clearl put up the analysis results and work\n\n"
         "1. Dataset Overview: Describe the dataset, including its size, columns, and notable patterns or observations.\n"
         "2. Insights: Mention inferences that can be made from the dataset profile.\n"
         "3. Preprocessing Steps: Explain the data preprocessing techniques applied, including missing value handling.\n"
@@ -541,7 +542,7 @@ def generate_readme(data):
         "5. Include the png saved with file_name of the chart image. Strictly use the file_name as the image source. its a png file"
         "6. Charts: For each generated chart, include its name, description, and purpose.\n\n"
         "7. You have been given the anslysis results as well so write the anaysis result- answer, insight and the future implications"
-        "8. Ensure everything is correct and the README is well-structured and easy to read and that it include all details of the analysis.\n\n"
+        "8. Ensure everything is correct and the README is well-structured and easy to read and that it include all details of the analysis Focus more on results of analysis.\n\n"
         "Input Data:\n"
         f"{json.dumps(data, indent=2)}"
     )
@@ -549,7 +550,7 @@ def generate_readme(data):
     json_data = {
         "model": model,
         "messages": [{"role": "system", "content": readme_prompt}],
-        "max_tokens": 1500
+        "max_tokens": 3000
     }
     
     try:
