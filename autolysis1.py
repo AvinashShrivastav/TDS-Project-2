@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import base64
 
-FILE_NAME = 'media.csv'
+FILE_NAME = sys.argv[1]
 
 AIPROXY_TOKEN = os.environ.get("AIPROXY_TOKEN")
 URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
