@@ -412,7 +412,7 @@ for i in range(len(questions)):
 
     json_data = {
         "model": "gpt-4o-mini",
-        "messages": [
+        "messages": [ 
             {
                 "role": "system",
                 "content": instructions_to_make_charts
