@@ -537,7 +537,7 @@ def generate_readme(INSTRUCTIONS_TO_CREATE_README, DATA_FOR_README):
 
     try:
         # Send the request to the model API and get the response
-        response = requests.post(url, headers=headers, json=json_data)
+        response = requests.post(URL, headers=HEADERS, json=json_data)
         
         # Parse the JSON response from the model
         response_data = response.json()
